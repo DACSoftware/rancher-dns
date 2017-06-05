@@ -2,7 +2,7 @@
 
 // config
 // @TODO move to env
-$rootDomain = "docker.e-d-p.net.";
+$rootDomain = trim("docker.e-d-p.net", ".");
 $rancherHost = "10.0.2.200:8181";
 $domainTtl = 60;
 // end config
@@ -44,7 +44,7 @@ $retry = 15;
 
 $zoneContents = <<<EOF
 \$ttl {$ttl}
-@	IN	SOA	{$rootDomain} root.{$rootDomain} (
+@	IN	SOA	{$rootDomain}. root.{$rootDomain}. (
 					{$serial}
 					{$refresh}
 					{$retry}
@@ -99,10 +99,11 @@ EOF;
 
 $oldZoneContents = @file_get_contents($zoneFileName);
 
-file_put_contents($zoneContents, $zoneFileName);
-file_put_contents($confContents, $confFileName);
-
+// @TODO fix this comparsion: file are always different -> they contain date
 if ($oldZoneContents != $zoneContents) {
+    file_put_contents($zoneFileName, $zoneContents);
+    file_put_contents($confFileName, $confContents);
+
     echo "New configuration generated\n";
     exit(0);
 }

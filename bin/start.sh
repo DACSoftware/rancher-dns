@@ -16,6 +16,6 @@ do
     if [ $? = 0 ]
     then
         echo "Reloadind bind configuration"
-        rndc load
+        rndc reload
     fi
 done

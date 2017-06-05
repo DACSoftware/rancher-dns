@@ -7,6 +7,8 @@ RUN apt-get -y install php-cli
 
 COPY bin/* /bin/
 
+RUN mkdir -p /etc/bind/zones
+
 EXPOSE 53/udp
 
 CMD /bin/start.sh
