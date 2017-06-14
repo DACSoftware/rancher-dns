@@ -25,7 +25,7 @@ $context = stream_context_create($opts);
 
 $rancherKeyPrefix = $rancherKey ? $rancherKey . '@' : '';
 
-$containers = json_decode(file_get_contents("http://{$rancherKeyPrefix}{$rancherHost}/{$version}/containers"));
+$containers = json_decode(file_get_contents("http://{$rancherKeyPrefix}{$rancherHost}/{$version}/containers", false, $context));
 $self = json_decode(file_get_contents("http://{$selfHost}/{$versionDate}/self/container", false, $context));
 
 if ($containers == null) {
