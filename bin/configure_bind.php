@@ -2,11 +2,13 @@
 
 // config
 // @TODO move to env
-$rootDomain = trim("docker.e-d-p.net", ".");
-$rancherHost = "10.0.2.200:8181";
-$domainTtl = 60;
+$rootDomain = getenv("DOMAIN") !== false ? getenv("DOMAIN") : "docker.e-d-p.net";
+$rancherHost = getenv("RANCHER_HOST") !== false ? getenv("RANCHER_HOST") : "10.0.2.200:8181";
+$rancherKey = getenv("RANCHER_KEY") !== false ? getenv("RANCHER_KEY") : null;
+$domainTtl = getenv("DOMAIN_TTL") !== false ? intval(getenv("DOMAIN_TTL")) : 60;
 // end config
 
+$rootDomain = trim($rootDomain, ".");
 list($rootIP, $hostPort) = explode(":", $rancherHost);
 $version = "v1";
 $selfHost = "rancher-metadata";
@@ -21,7 +23,9 @@ $opts = [
 
 $context = stream_context_create($opts);
 
-$containers = json_decode(file_get_contents("http://{$rancherHost}/{$version}/containers"));
+$rancherKeyPrefix = $rancherKey ? $rancherKey . '@' : '';
+
+$containers = json_decode(file_get_contents("http://{$rancherKeyPrefix}{$rancherHost}/{$version}/containers"));
 $self = json_decode(file_get_contents("http://{$selfHost}/{$versionDate}/self/container", false, $context));
 
 if ($containers == null) {
