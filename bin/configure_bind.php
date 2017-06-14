@@ -82,7 +82,8 @@ foreach($containers->data as $container) {
 
 // search for application containers
 foreach($containers->data as $container) {
-    if (isset($container->data->fields->environment->VIRTUAL_HOST)) {
+    if (isset($container->data->fields->dockerHostIp)
+        && isset($container->data->fields->environment->VIRTUAL_HOST)) {
         $zoneContents .=
             str_pad($container->data->fields->environment->VIRTUAL_HOST . ".", 64, " ", STR_PAD_RIGHT)
             . " IN\tA\t"
