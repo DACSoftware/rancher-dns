@@ -60,8 +60,8 @@ EOF;
 
 
 // search for dns containers
+$nsIndex = 1;
 foreach($containers->data as $container) {
-    $nsIndex = 1;
     if (isset($container->data->fields->dockerHostIp)
         && isset($container->data->fields->labels->{"io.rancher.stack_service.name"})
         && $self->labels->{"io.rancher.stack_service.name"} === $container->data->fields->labels->{"io.rancher.stack_service.name"}) {
@@ -83,7 +83,8 @@ foreach($containers->data as $container) {
 // search for application containers
 foreach($containers->data as $container) {
     if (isset($container->data->fields->dockerHostIp)
-        && isset($container->data->fields->environment->VIRTUAL_HOST)) {
+        && isset($container->data->fields->environment->VIRTUAL_HOST)
+        && substr($container->data->fields->environment->VIRTUAL_HOST, -strlen("." . $rootDomain)) === "." . $rootDomain) {
         $zoneContents .=
             str_pad($container->data->fields->environment->VIRTUAL_HOST . ".", 64, " ", STR_PAD_RIGHT)
             . " IN\tA\t"
