@@ -21,11 +21,13 @@ $opts = [
     ]
 ];
 
+if (!empty($rancherKey)) {
+    $opts['http']['header'] .= 'Authorization: Basic ' . base64_encode($rancherKey) . "\r\n";
+}
+
 $context = stream_context_create($opts);
 
-$rancherKeyPrefix = $rancherKey ? $rancherKey . '@' : '';
-
-$containers = json_decode(file_get_contents("http://{$rancherKeyPrefix}{$rancherHost}/{$version}/containers?limit=1000", false, $context));
+$containers = json_decode(file_get_contents("http://{$rancherHost}/{$version}/containers?limit=1000", false, $context));
 $self = json_decode(file_get_contents("http://{$selfHost}/{$versionDate}/self/container", false, $context));
 
 if ($containers == null) {
