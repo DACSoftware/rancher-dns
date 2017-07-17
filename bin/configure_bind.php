@@ -27,7 +27,7 @@ if (!empty($rancherKey)) {
 
 $context = stream_context_create($opts);
 
-$containers = json_decode(file_get_contents("http://{$rancherHost}/{$version}/containers", false, $context));
+$containers = json_decode(file_get_contents("http://{$rancherHost}/{$version}/containers?limit=1000", false, $context));
 $self = json_decode(file_get_contents("http://{$selfHost}/{$versionDate}/self/container", false, $context));
 
 if ($containers == null) {
@@ -89,6 +89,27 @@ foreach($containers->data as $container) {
         && substr($container->data->fields->environment->VIRTUAL_HOST, -strlen("." . $rootDomain)) === "." . $rootDomain) {
         $zoneContents .=
             str_pad($container->data->fields->environment->VIRTUAL_HOST . ".", 64, " ", STR_PAD_RIGHT)
+            . " IN\tA\t"
+            . $container->data->fields->dockerHostIp
+            . "\n";
+    }
+}
+
+// all containers by id
+foreach($containers->data as $container) {
+    if (isset($container->data->fields->dockerHostIp)) {
+        $zoneContents .=
+            str_pad($container->id . ".rancher-container." . $rootDomain . ".", 64, " ", STR_PAD_RIGHT)
+            . " IN\tA\t"
+            . $container->data->fields->dockerHostIp
+            . "\n";
+        $zoneContents .=
+            str_pad($container->externalId . ".docker-container." . $rootDomain . ".", 64, " ", STR_PAD_RIGHT)
+            . " IN\tA\t"
+            . $container->data->fields->dockerHostIp
+            . "\n";
+        $zoneContents .=
+            str_pad(substr($container->externalId, 0, 12) . ".docker-container." . $rootDomain . ".", 64, " ", STR_PAD_RIGHT)
             . " IN\tA\t"
             . $container->data->fields->dockerHostIp
             . "\n";
