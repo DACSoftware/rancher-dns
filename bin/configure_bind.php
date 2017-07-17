@@ -104,11 +104,6 @@ foreach($containers->data as $container) {
             . $container->data->fields->dockerHostIp
             . "\n";
         $zoneContents .=
-            str_pad($container->externalId . ".docker-container." . $rootDomain . ".", 64, " ", STR_PAD_RIGHT)
-            . " IN\tA\t"
-            . $container->data->fields->dockerHostIp
-            . "\n";
-        $zoneContents .=
             str_pad(substr($container->externalId, 0, 12) . ".docker-container." . $rootDomain . ".", 64, " ", STR_PAD_RIGHT)
             . " IN\tA\t"
             . $container->data->fields->dockerHostIp
